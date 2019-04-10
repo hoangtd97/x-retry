@@ -1,0 +1,26 @@
+{
+  "name": "x-retry",
+  "version": "1.0.5",
+  "main": "index.js",
+  "author": "u-x-i",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hoangtd97/x-retry"
+  },
+  "description": "retry async or callback based function",
+  "keywords": [
+    "retry"
+  ],
+  "scripts": {
+    "test": "mocha *.spec.js --exit"
+  },
+  "dependencies": {
+    "@u-e-i/err-cannot-retry": "^1.0.0",
+    "@u-e-i/err-reached-max-retry": "^1.0.0",
+    "delay": "^4.1.0"
+  },
+  "devDependencies": {
+    "mocha": "^6.0.2"
+  }
+}
