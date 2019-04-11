@@ -13,7 +13,7 @@
     "retry"
   ],
   "scripts": {
-    "test": "mocha *.spec.js --exit"
+    "test": "mocha *.spec.js --exit --timeout=10000"
   },
   "dependencies": {
     "@u-e-i/err-cannot-retry": "^1.0.0",

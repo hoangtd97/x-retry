@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = { 
-  callbackRetry : require('./callback-retry'),
-  asyncRetry : require('./async-retry')
+  callbackRetry : require('./src/callback-retry'),
+  asyncRetry : require('./src/async-retry'),
+  Timeout : require('./src/timeout')
 };
