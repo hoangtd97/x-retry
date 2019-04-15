@@ -1,74 +1,3 @@
-Retry callback based or async function
-
-## Example
-
-* Operation
-```js
-const BusyService = {
-  call_times : 0,
-  getHelloAtEach3Times : function (must_be_hi, callback) {
-    this.call_times++;
-    
-    if (this.call_times % 3 === 0) {
-      return callback(null, 'hello');
-    }
-
-    let BusyError = new Error('Service is busy');
-    BusyError.status = 503;
-
-    return callback(BusyError);
-  },
-  asyncGetHelloAtEach3Times : async function (must_be_hi) {
-    this.call_times++;
-    
-    if (this.call_times % 3 === 0) {
-      return 'hello';
-    }
-
-    let BusyError = new Error('Service is busy');
-    BusyError.status = 503;
-
-    throw BusyError;
-  }
-};
-```
-
-* Async Retry
-```js
-const { asyncRetry, Timeout } = require('x-retry');
-
-it ('should retry a async function ok after three times', async () => {
-  let message = await asyncRetry({
-    func      : BusyService.asyncGetHelloAtEach3Times,
-    thisArg   : BusyService,
-    args      : ['hi'],
-    isRetry   : (error) => !(error.status >= 400 && error.status < 500),
-    maxRetry  : 3,
-    timeout   : Timeout({ minTimeout : 100, maxTimeout : 10000 })
-  });
-
-  assert.equal(message, 'hello');
-});
-```
-
-* Callback Retry
-```js
-const { callbackRetry, Timeout } = require('x-retry');
-
-it ('should retry a callback function ok after three times', (done) => {
-  callbackRetry({
-    func      : BusyService.getHelloAtEach3Times,
-    thisArg   : BusyService,
-    args      : ['hi'],
-    isRetry   : (error) => !(error.status >= 400 && error.status < 500),
-    maxRetry  : 3,
-    timeout   : Timeout({ minTimeout : 100, maxTimeout : 10000 }),
-    callback  : (err, message) => (!err && message === 'hello') ? done() : done(err) 
-  });
-});
-```
-
-* See more cases in [test file](./index.spec.js)
 ## Functions
 
 <dl>
@@ -76,19 +5,19 @@ it ('should retry a callback function ok after three times', (done) => {
 <dd><p>Retry an async function</p>
 </dd>
 <dt><a href="#callbackRetry">callbackRetry(options)</a> ⇒ <code>void</code></dt>
-<dd><p>Retry an callback based function</p>
+<dd><p>Retry a callback based function</p>
 </dd>
 <dt><a href="#Timeout">Timeout([options])</a> ⇒ <code>function</code></dt>
 <dd><p>Create function that generate timeout by <a href="http://dthain.blogspot.com/2009/02/exponential-backoff-in-distributed.html">exponential backoff algorithm</a></p>
 </dd>
 </dl>
 
-<a id="asyncRetry"></a>
+<a name="asyncRetry"></a>
 
 ## asyncRetry(options) ⇒ <code>Promise.&lt;any&gt;</code>
-Retry a async function
+Retry an async function
 
-**Kind**: function  
+**Kind**: global function  
 **Returns**: <code>Promise.&lt;any&gt;</code> - result of async func  
 **Throws**:
 
@@ -108,12 +37,12 @@ Retry a async function
 | [options.activity] | <code>string</code> |  | what is this activity name ? default is func.name |
 | [options.actor] | <code>string</code> |  | who do this activity ? default is thisArg.name |
 
-<a id="callbackRetry"></a>
+<a name="callbackRetry"></a>
 
 ## callbackRetry(options) ⇒ <code>void</code>
-Retry an callback based function
+Retry a callback based function
 
-**Kind**: function  
+**Kind**: global function  
 **Errors**: :
 * [ERR_REACHED_MAX_RETRY](https://www.npmjs.com/package/@u-e-i/err-reached-max-retry)
 * [ERR_CANNOT_RETRY](https://www.npmjs.com/package/@u-e-i/err-cannot-retry) when not reached max retry but isRetry() return false.  
@@ -123,7 +52,7 @@ Retry an callback based function
 | options | <code>object</code> |  |  |
 | options.func | <code>function</code> |  | callback based function to retry |
 | [options.thisArg] | <code>object</code> |  | this pointer apply to function |
-| [options.args] | <code>Array.&lt;any&gt;</code> |  | arguments of function |
+| [options.args] | <code>Array.&lt;any&gt;</code> | <code>[]</code> | arguments of function |
 | options.callback | <code>function</code> |  | callback of function |
 | [options.isRetry] | <code>function</code> |  | (error) => boolean |
 | [options.maxRetry] | <code>number</code> | <code>3</code> | max retry times |
@@ -131,12 +60,12 @@ Retry an callback based function
 | [options.activity] | <code>string</code> |  | what is this activity name ? default is func.name |
 | [options.actor] | <code>string</code> |  | who do this activity ? default is thisArg.name |
 
-<a id="Timeout"></a>
+<a name="Timeout"></a>
 
 ## Timeout([options]) ⇒ <code>function</code>
 Create function that generate timeout by [exponential backoff algorithm](http://dthain.blogspot.com/2009/02/exponential-backoff-in-distributed.html)
 
-**Kind**: function  
+**Kind**: global function  
 **Returns**: <code>function</code> - generate timeout  
 
 | Param | Type | Default |
@@ -147,7 +76,7 @@ Create function that generate timeout by [exponential backoff algorithm](http://
 | [options.factor] | <code>Number</code> | <code>2</code> | 
 | [options.randomize] | <code>Boolean</code> | <code>true</code> | 
 
-<a id="Timeout..generateTimeout"></a>
+<a name="Timeout..generateTimeout"></a>
 
 ### Timeout~generateTimeout([retryCount]) ⇒ <code>number</code>
 Generate timeout = Math.min(random * minTimeout * Math.pow(factor, retryCount), maxTimeout)
@@ -158,3 +87,4 @@ Generate timeout = Math.min(random * minTimeout * Math.pow(factor, retryCount), 
 | Param | Type | Default |
 | --- | --- | --- |
 | [retryCount] | <code>number</code> | <code>1</code> | 
+
